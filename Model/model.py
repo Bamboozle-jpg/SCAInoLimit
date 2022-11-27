@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 from torch.utils.data import random_split, TensorDataset, DataLoader
 
-class testModel(torch.nn.Module):
+class generalModel(torch.nn.Module):
     # Initialize model
     def __init__(self, inputSize, outputSize):
-        super(testModel, self).__init__()
+        super(generalModel, self).__init__()
 
         self.linear1 = torch.nn.Linear(inputSize, 200)
         self.activation = torch.nn.ReLU()
@@ -31,7 +31,7 @@ class testModel(torch.nn.Module):
 
     # Loads model from file
     def loadModel(inputSize, outputSize, path):
-        model = testModel(inputSize, outputSize)
+        model = generalModel(inputSize, outputSize)
         model.load_state_dict(torch.load("./" + path))
         model.eval()
         return model
@@ -87,7 +87,7 @@ class testModel(torch.nn.Module):
 
             # Save model if accuracy is best
             if accuracy > bestAccuracy:
-                self.saveModel("testModel.pth")
+                self.saveModel("waveModel.pth")
                 bestAccuracy = accuracy
 
             # Print current Epoch stats
@@ -149,9 +149,9 @@ outputSize = len(solovs)
 
 # Actually put it into the model
 # For loading current one
-waveModel = testModel.loadModel(inputSize, outputSize, "testModel.pth")
+# waveModel = generalModel.loadModel(inputSize, outputSize, "waveModel.pth")
 # For creating new one
-# waveModel = testModel(inputSize, outputSize)
+waveModel = generalModel(inputSize, outputSize)
 print("input size :", inputSize)
 print("output size :", outputSize)
 waveModel.trainn(10, trainLoader, validateLoader)
