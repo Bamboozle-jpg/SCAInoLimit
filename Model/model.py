@@ -1,8 +1,12 @@
 import torch
+import matplotlib.pyplot as plt
 import csv
 import pandas as pd
 import numpy as np
 from torch.utils.data import random_split, TensorDataset, DataLoader
+import math
+
+globTrainLoss = []
 
 class generalModel(torch.nn.Module):
     # Initialize model
@@ -91,8 +95,36 @@ class generalModel(torch.nn.Module):
                 bestAccuracy = accuracy
 
             # Print current Epoch stats
+            globTrainLoss.append(trainLossValue)
             print("Completed training for epoch :", epoch, 'Training Loss is %.4f' %trainLossValue, 'Validation Loss is: %.4f' %valLossValue, 'Accuracy is %d %%' % (accuracy))
 
+    def test(self, testLoader, testSplit, solovs):
+        runningAccuracy = 0
+        total = 0
+        checkingArray = [[0 for i in range(len(solovs))] for j in range(len(solovs))]
+        print(solovs)
+        print(type(solovs[0]))
+
+        with torch.no_grad():
+            for data in testLoader:
+                inputs, outputs = data
+                outputs = outputs.to(torch.float32) 
+                predictedOutputs = self(inputs)
+                _, predicted = torch.max(predictedOutputs, 1)
+                print(predicted.item())
+                print(outputs.item())
+                predIndex = solovs.index(float(predicted.item()))
+                outIndex = solovs.index(int(outputs.item()))
+                checkingArray[predIndex][outIndex] += 1
+
+                total += outputs.size(0)
+                runningAccuracy += (predicted == outputs).sum().item()
+
+            checkDf = pd.DataFrame(checkingArray, columns= solovs)
+            checkDf.index = solovs
+            print('Accuracy of the model based on the test set of', testSplit ,'inputs is: %d %%' % (100 * runningAccuracy / total))
+            print('           Actual values')
+            print(checkDf)
 
 # Grabs data and turns it into usable form:
 
@@ -105,7 +137,11 @@ actualDict['inundate'] = []
 
 # Turns list of dictionaries into dictionary of lists
 for i in range(0, len(everythingDict)):
-    actualDict['solov'].append(float(everythingDict[i]['solovievIdentity']))
+    if float(everythingDict[i]['solovievIdentity']) - math.floor(float(everythingDict[i]['solovievIdentity'])) > .5:
+        tempSolov = math.ceil(float(everythingDict[i]['solovievIdentity']))
+    else:
+        tempSolov = math.floor(float(everythingDict[i]['solovievIdentity']))
+    actualDict['solov'].append(tempSolov)
     actualDict['height'].append(float(everythingDict[i]['waveHeight']))
     actualDict['inundate'].append(float(everythingDict[i]['horizontalInundation']))
 
@@ -116,6 +152,7 @@ output = df.loc[:, ['solov']]
 
 # Turns pandas dataframes into tensors and Tensor Dataset
 input = torch.Tensor(input.to_numpy())
+print(input)
 output = torch.Tensor(output.to_numpy())
 data = TensorDataset(input, output)
 
@@ -148,10 +185,27 @@ outputSize = len(solovs)
 # TRAINING AND TESTING MODEL!!!
 
 # Actually put it into the model
+
 # For loading current one
-# waveModel = generalModel.loadModel(inputSize, outputSize, "waveModel.pth")
+waveModel = generalModel.loadModel(inputSize, outputSize, "waveModel.pth")
 # For creating new one
-waveModel = generalModel(inputSize, outputSize)
+# waveModel = generalModel(inputSize, outputSize)
+
+# Train model
 print("input size :", inputSize)
 print("output size :", outputSize)
-waveModel.trainn(10, trainLoader, validateLoader)
+waveModel.trainn(150, trainLoader, validateLoader)
+
+waveModel.test(testLoader, testSplit, solovs)
+
+# Analyze Training success w/ matplotlib
+epochs = [i for i in range(1, len(globTrainLoss) + 1)]
+fig = plt.figure(tight_layout=True)
+ax = fig.add_subplot(2, 2, 2)
+ax.plot(epochs, globTrainLoss, linewidth=1.5, markersize=0, color='purple')
+ax.set_title("Training Loss")
+ax.set_xlabel('Training Epoch')
+ax.set_ylabel('Loss')
+plt.show()
+
+# Add in global variable so that every test you can plot it in matplotlib
