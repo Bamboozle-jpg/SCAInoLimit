@@ -187,9 +187,9 @@ outputSize = len(solovs)
 # Actually put it into the model
 
 # For loading current one
-waveModel = generalModel.loadModel(inputSize, outputSize, "waveModel.pth")
+# waveModel = generalModel.loadModel(inputSize, outputSize, "waveModel.pth")
 # For creating new one
-# waveModel = generalModel(inputSize, outputSize)
+waveModel = generalModel(inputSize, outputSize)
 
 # Train model
 print("input size :", inputSize)

@@ -8,8 +8,15 @@ from mpl_toolkits.mplot3d import Axes3D
 tsunamList=[*csv.DictReader(open('sources.csv'))]
 # Want to look at SOURCE_ID, YEAR, COUNTRY, MAXIMUM_HEIGHT, MAGNITUDE_IIDA and INTENSITY_SOLOVIEV
 waveList=[*csv.DictReader(open('waves.csv'))]
-# Want to look at SOURCE_ID, WAVE_ID, YEAR, COUNTRY, DISTANCE_FROM_SOURCE, TRAVEL_TIME_HOURS, TRAVEL_TIME_MINUTES
-# PERIOD, FIRST_MOTION(What is this?), MAXIMUM_HEIGHT, HORIZONTAL_INUNDATION
+# Want to look at SOURCE_ID,
+# WAVE_ID, YEAR, 
+# DISTANCE_FROM_SOURCE, 
+# TRAVEL_TIME_HOURS, 
+# TRAVEL_TIME_MINUTES
+# PERIOD, 
+# FIRST_MOTION, 
+# MAXIMUM_HEIGHT, 
+# HORIZONTAL_INUNDATION
 
 fig = plt.figure(tight_layout=True)
 ax = fig.add_subplot(2, 2, 1)
