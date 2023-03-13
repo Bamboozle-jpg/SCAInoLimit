@@ -198,10 +198,10 @@ learningRate = 0.01
 #   optimizer 0-12 int 
 optimNum = 0
 #   activation options 1-23, length of 10
-layerIndices = [7 for x in range (0, 10)]
+layerIndices = [9 for x in range (0, 10)]
 
 # Tracks how well it's doing overtime
-improvement = [0] * 50
+improvement = [0] * 10
 
 # Best numbers from current run in temp, then moved to best for next run
 bestEpochs = [epochs, epochs, epochs]
@@ -240,7 +240,7 @@ numzeros = 0
 numones = 0
 numtwos = 2
 
-for j in range(0, 50):
+for j in range(0, 10):
     # Resets best results so it fills the best lists with all new values
     improvement[j] = (bestResults[0] + bestResults[1] + bestResults[2])/3
     bestResults = [0, 0, 0]
@@ -269,7 +269,7 @@ for j in range(0, 50):
         # Changes the learning rate
         learningRate = max(0.001 , min(0.1, bestlearningRates[bestIndex()] * (10**(random.random()-.5))))
 
-        # # Changes the layer activations
+        # Changes the layer activations
         # activation = max(1, min(22, activationChanger()))
         # for layer in range(0, len(layerIndices)):
         #     layerIndices[layer] = activation
@@ -285,7 +285,7 @@ for j in range(0, 50):
             results = 0
 
         print("")
-        print("trial " + str(i+1) + "/50 of " + str(j+1) + "/50")
+        print("trial " + str(i+1) + "/10 of " + str(j+1) + "/10")
         print("epochs : " + str(epochs))
         print("numHiddenLayers : " + str(numHiddenLayers))
         print("optimNums : " + str(optimNum))
@@ -348,7 +348,7 @@ for j in range(0, 50):
         except:
             results = 0
         print("")
-        print("trial " + str(i+30) + "/50 of " + str(j+1) + "/50")
+        print("trial " + str(i+30) + "/10 of " + str(j+1) + "/10")
         print("epochs : " + str(epochs))
         print("numHiddenLayers : " + str(numHiddenLayers))
         print("optimNums : " + str(optimNum))
